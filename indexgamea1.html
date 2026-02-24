@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A1 Word Scramble</title>
+
+<style>
+:root {
+  --gold:#d4a017;
+  --dark:#0f0f18;
+  --box:#1b1b2a;
+  --green:#2ecc71;
+  --red:#e74c3c;
+}
+
+body{
+  margin:0;
+  font-family:Georgia, serif;
+  background:radial-gradient(circle at top,#1c1c2e,#0f0f18 70%);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.game{
+  background:var(--box);
+  padding:40px;
+  border-radius:18px;
+  width:90%;
+  max-width:550px;
+  text-align:center;
+  border:2px solid rgba(212,160,23,0.3);
+}
+
+h1{color:var(--gold);}
+
+.scrambled{
+  font-size:2rem;
+  letter-spacing:6px;
+  margin:25px 0;
+  color:var(--gold);
+}
+
+input{
+  padding:12px;
+  width:80%;
+  border-radius:10px;
+  border:2px solid var(--gold);
+  text-align:center;
+  font-size:1rem;
+}
+
+.correctInput{ border:2px solid var(--green); }
+.wrongInput{ border:2px solid var(--red); }
+
+button{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:var(--gold);
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.message{
+  margin-top:20px;
+  font-size:1.1rem;
+  min-height:50px;
+}
+
+.correct{ color:var(--green); }
+.wrong{ color:var(--red); }
+
+@keyframes shake{
+  0%{transform:translateX(0);}
+  20%{transform:translateX(-6px);}
+  40%{transform:translateX(6px);}
+  60%{transform:translateX(-6px);}
+  80%{transform:translateX(6px);}
+  100%{transform:translateX(0);}
+}
+
+.shake{ animation:shake 0.4s; }
+
+.stats{ margin-top:15px; }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+  <h1>A1 WORD SCRAMBLE</h1>
+  <div class="scrambled" id="scrambledWord"></div>
+
+  <input type="text" id="userInput"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false">
+  <br>
+  <button onclick="checkAnswer()">Submit</button>
+
+  <div class="message" id="message"></div>
+
+  <div class="stats">
+    Score: <span id="score">0</span>
+  </div>
+</div>
+
+<script>
+const specialFirstWord="i love mr. theophilus";
+
+const wordsData={
+  cat:{pos:"noun",def:"A small animal that says meow."},
+  dog:{pos:"noun",def:"A friendly animal that barks."},
+  sun:{pos:"noun",def:"The star that gives us light."},
+  moon:{pos:"noun",def:"The object that shines at night."},
+  book:{pos:"noun",def:"Pages with words to read."},
+  pen:{pos:"noun",def:"Used for writing."},
+  apple:{pos:"noun",def:"A red or green fruit."},
+  milk:{pos:"noun",def:"A white drink from cows."},
+  water:{pos:"noun",def:"A clear liquid we drink."},
+  house:{pos:"noun",def:"A place where people live."},
+  school:{pos:"noun",def:"A place to learn."},
+  friend:{pos:"noun",def:"Someone you trust."},
+  happy:{pos:"adjective",def:"Feeling good."},
+  music:{pos:"noun",def:"Sound that forms songs."},
+  family:{pos:"noun",def:"People related to you."},
+  teacher:{pos:"noun",def:"A person who teaches."},
+  student:{pos:"noun",def:"A person who learns."},
+  food:{pos:"noun",def:"Things we eat."},
+  chair:{pos:"noun",def:"Something you sit on."},
+  table:{pos:"noun",def:"Furniture for eating or working."}
+};
+
+const words=Object.keys(wordsData);
+
+let currentWord="";
+let score=0;
+let firstRound=true;
+
+function scramble(word){
+  return word.split("").sort(()=>Math.random()-0.5).join("");
+}
+
+function newWord(){
+  if(firstRound){
+    currentWord=specialFirstWord;
+    firstRound=false;
+  } else{
+    currentWord=words[Math.floor(Math.random()*words.length)];
+  }
+
+  document.getElementById("scrambledWord").textContent=scramble(currentWord);
+  document.getElementById("userInput").value="";
+  document.getElementById("message").textContent="";
+  document.getElementById("userInput").classList.remove("correctInput","wrongInput");
+  document.getElementById("userInput").focus();
+}
+
+function checkAnswer(){
+  const input=document.getElementById("userInput");
+  const message=document.getElementById("message");
+  const guess=input.value.toLowerCase();
+
+  if(guess===currentWord){
+    score++;
+    document.getElementById("score").textContent=score;
+
+    input.classList.add("correctInput");
+    message.className="message correct";
+    if(wordsData[currentWord]){
+      message.innerHTML="<strong>CORRECT</strong><br>("+
+        wordsData[currentWord].pos+
+        ") — "+
+        wordsData[currentWord].def;
+    } else{
+      message.innerHTML="<strong>CORRECT</strong>";
+    }
+
+    setTimeout(newWord,3000);
+
+  } else{
+    input.classList.add("wrongInput","shake");
+    message.className="message wrong";
+    message.innerHTML="<strong>WRONG</strong>";
+
+    setTimeout(()=>{
+      input.classList.remove("shake","wrongInput");
+    },400);
+  }
+}
+
+document.getElementById("userInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter") checkAnswer();
+});
+
+newWord();
+</script>
+
+</body>
+</html>

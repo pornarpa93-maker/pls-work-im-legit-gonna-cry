@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Scramble Academy</title>
+
+<style>
+:root{
+  --dark:#0b0b12;
+  --mid:#141420;
+  --gold:#c9a227;
+  --soft:#9e9e9e;
+}
+
+body{
+  margin:0;
+  font-family:Georgia, serif;
+  background:linear-gradient(180deg,#0b0b12,#141420,#0b0b12);
+  color:#e8e8e8;
+  height:100vh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  cursor:default;
+}
+
+/* remove link styling */
+.level-link{
+  text-decoration:none;
+  color:inherit;
+}
+
+/* rotating aura ring */
+body::before{
+  content:"";
+  position:fixed;
+  width:900px;
+  height:900px;
+  border-radius:50%;
+  border:1px solid rgba(201,162,39,0.1);
+  animation:spin 60s linear infinite;
+  z-index:-2;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+/* drifting particles */
+.background{
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:-1;
+}
+
+.background span{
+  position:absolute;
+  width:3px;
+  height:3px;
+  background:rgba(201,162,39,0.4);
+  border-radius:50%;
+  animation:float 18s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
+/* floating letters */
+.letters span{
+  position:absolute;
+  font-size:22px;
+  color:rgba(201,162,39,0.15);
+  animation:drift 25s linear infinite;
+}
+
+@keyframes drift{
+  from{transform:translateY(100vh) rotate(0deg);}
+  to{transform:translateY(-10vh) rotate(360deg);}
+}
+
+/* title */
+h1{
+  font-size:3.2rem;
+  letter-spacing:4px;
+  color:var(--gold);
+  text-shadow:0 0 12px rgba(201,162,39,0.4);
+  margin-bottom:8px;
+  animation:pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{text-shadow:0 0 12px rgba(201,162,39,0.4);}
+  50%{text-shadow:0 0 30px rgba(201,162,39,0.9);}
+}
+
+.subtitle{
+  font-size:1.1rem;
+  color:var(--soft);
+  margin-bottom:40px;
+  font-style:italic;
+}
+
+/* speech */
+.speech{
+  max-width:650px;
+  margin-bottom:70px;
+  font-size:1.1rem;
+  line-height:1.8;
+  color:#d6d6d6;
+  background:rgba(255,255,255,0.04);
+  padding:35px;
+  border-radius:14px;
+  border:1px solid rgba(201,162,39,0.2);
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 30px rgba(0,0,0,0.6);
+  animation:slowFade 3s ease forwards;
+}
+
+@keyframes slowFade{
+  from{opacity:0;transform:translateY(15px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* level grid - FIXED 3 COLUMNS */
+.level-container{
+  width:90%;
+  max-width:1100px;
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:25px;
+  animation:fadeUp 2s ease forwards;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(40px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* level box */
+.level-box{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(135deg,#1a1a1f,#101014);
+  border:2px solid rgba(201,162,39,0.3);
+  border-radius:20px;
+  padding:45px 20px;
+  cursor:pointer;
+  transition:all 0.4s ease;
+  animation:boxFloat 4s ease-in-out infinite, goldPulse 3s ease-in-out infinite;
+}
+
+@keyframes boxFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+
+@keyframes goldPulse{
+  0%,100%{box-shadow:0 0 30px rgba(201,162,39,0.3);}
+  50%{box-shadow:0 0 80px rgba(201,162,39,0.9);}
+}
+
+.level-box::before{
+  content:"";
+  position:absolute;
+  top:-2px;
+  left:-100%;
+  width:120%;
+  height:120%;
+  background:linear-gradient(120deg,transparent,rgba(201,162,39,0.6),transparent);
+  transform:rotate(15deg);
+  transition:0.6s;
+}
+
+.level-box:hover::before{
+  left:100%;
+}
+
+.level-box:hover{
+  transform:translateY(-12px) scale(1.07);
+  border-color:var(--gold);
+  box-shadow:0 0 100px rgba(201,162,39,1);
+}
+
+.level-box h2{
+  font-size:1.6rem;
+  color:var(--gold);
+}
+
+.level-box p{
+  font-size:0.95rem;
+  color:var(--soft);
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+<div class="letters"></div>
+
+<h1>EXPAND YOUR VOCABULARY</h1>
+<div class="subtitle">A great plot does no good with a poor writer.</div>
+
+<div class="speech">
+A single word has ended wars.  
+A single word has begun them.  
+Ink has done what swords could not.  
+Choose carefully.
+</div>
+
+<div class="level-container">
+
+  <a href="indexgamea1.html" class="level-link">
+    <div class="level-box">
+      <h2>A1</h2>
+      <p>Where every word begins.</p>
+    </div>
+  </a>
+
+  <a href="indexgamea2.html" class="level-link">
+    <div class="level-box">
+      <h2>A2</h2>
+      <p>Foundations grow stronger.</p>
+    </div>
+  </a>
+
+  <a href="indexgameb1.html" class="level-link">
+    <div class="level-box">
+      <h2>B1</h2>
+      <p>Confidence takes shape. (timer)</p>
+    </div>
+  </a>
+
+  <a href="indexgameb2.html" class="level-link">
+    <div class="level-box">
+      <h2>B2</h2>
+      <p>Sharpen your command. (timer)</p>
+    </div>
+  </a>
+
+  <a href="indexgamec1.html" class="level-link">
+    <div class="level-box">
+      <h2>C1</h2>
+      <p>Speak with precision. (timer)</p>
+    </div>
+  </a>
+
+  <a href="indexgamec2.html" class="level-link">
+    <div class="level-box">
+      <h2>C2</h2>
+      <p>Master the unseen force. (timer)</p>
+    </div>
+  </a>
+
+</div>
+
+<script>
+const bg=document.querySelector(".background");
+for(let i=0;i<40;i++){
+  const span=document.createElement("span");
+  span.style.left=Math.random()*100+"vw";
+  span.style.animationDuration=(Math.random()*12+10)+"s";
+  span.style.opacity=Math.random()*0.6;
+  bg.appendChild(span);
+}
+
+const lettersContainer=document.querySelector(".letters");
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+for(let i=0;i<25;i++){
+  const span=document.createElement("span");
+  span.textContent=chars[Math.floor(Math.random()*chars.length)];
+  span.style.left=Math.random()*100+"vw";
+  span.style.animationDuration=(Math.random()*20+15)+"s";
+  lettersContainer.appendChild(span);
+}
+
+document.addEventListener("mousemove", e=>{
+  const x=(e.clientX/window.innerWidth-0.5)*10;
+  const y=(e.clientY/window.innerHeight-0.5)*10;
+  document.querySelector(".level-container").style.transform=`translate(${x}px,${y}px)`;
+});
+</script>
+
+</body>
+</html>

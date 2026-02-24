@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writer's Word Scramble</title>
+
+<style>
+:root {
+  --dark: #0f0f18;
+  --box: #1b1b2a;
+  --gold: #d4a017;
+  --light: #f0f0f0;
+  --soft: #cccccc;
+}
+
+body {
+  margin: 0;
+  font-family: Georgia, serif;
+  background: radial-gradient(circle at top, #1c1c2e, #0f0f18 70%);
+  color: var(--light);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.background span {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(212,160,23,0.5);
+  border-radius: 50%;
+  animation: float linear infinite;
+}
+
+@keyframes float {
+  from { transform: translateY(100vh); }
+  to { transform: translateY(-10vh); }
+}
+
+.game-container {
+  background: var(--box);
+  padding: 45px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 550px;
+  text-align: center;
+  border: 2px solid rgba(212,160,23,0.3);
+  animation: pulseBorder 3s infinite alternate;
+}
+
+@keyframes pulseBorder {
+  from { box-shadow: 0 0 25px rgba(212,160,23,0.2); }
+  to { box-shadow: 0 0 45px rgba(212,160,23,0.5); }
+}
+
+h1 { color: var(--gold); }
+
+.scrambled-word {
+  font-size: 2rem;
+  letter-spacing: 6px;
+  margin: 25px 0;
+  color: var(--gold);
+  white-space: pre-wrap;
+}
+
+@keyframes letterShake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+  100% { transform: translateX(0); }
+}
+
+.shake { animation: letterShake 0.4s ease; }
+
+input {
+  padding: 12px;
+  width: 85%;
+  border-radius: 10px;
+  border: 2px solid rgba(212,160,23,0.4);
+  font-size: 1rem;
+  text-align: center;
+  background: #111;
+  color: white;
+}
+
+button {
+  margin-top: 15px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--gold);
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: transform 0.2s ease;
+}
+
+button:hover { transform: scale(1.08); }
+
+.stats { margin-top: 20px; }
+
+.reveal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  text-align: center;
+}
+
+#statusText {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--soft);
+}
+
+#bigWord {
+  font-size: 4rem;
+  font-weight: bold;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-shadow: 0 0 20px var(--gold),
+               0 0 40px var(--gold);
+  white-space: pre-wrap;
+}
+
+#wordInfo {
+  font-size: 1.2rem;
+  margin-top: 25px;
+  max-width: 80%;
+}
+
+#continueBtn {
+  margin-top: 35px;
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="background"></div>
+
+<div class="game-container">
+  <h1>WORD SCRAMBLE</h1>
+  <p>Unscramble the word before time runs out.</p>
+
+  <div class="scrambled-word" id="scrambledWord"></div>
+
+  <input type="text" id="userInput" placeholder="Type your guess...">
+  <br>
+  <button onclick="checkAnswer()">Submit</button>
+  <button onclick="newWord()">New Word</button>
+
+  <div class="stats">
+    Score: <span id="score">0</span> |
+    Time: <span id="timer">15</span>s
+  </div>
+</div>
+
+<div class="reveal-overlay" id="revealOverlay">
+  <div id="statusText"></div>
+  <div id="bigWord"></div>
+  <div id="wordInfo"></div>
+  <button id="continueBtn" onclick="continueGame()">Continue</button>
+</div>
+
+<script>
+const specialFirstWord = "i love mr. theophilus";
+
+const wordsData = {
+  achievement:{pos:"noun",def:"Something successfully completed."},
+  awareness:{pos:"noun",def:"Knowledge or understanding of a situation."},
+  challenge:{pos:"noun",def:"A difficult task requiring effort."},
+  confident:{pos:"adjective",def:"Feeling sure about your abilities."},
+  decision:{pos:"noun",def:"A choice made after thinking."},
+  environment:{pos:"noun",def:"The natural or social surroundings."},
+  essential:{pos:"adjective",def:"Absolutely necessary or important."},
+  influence:{pos:"noun",def:"The power to affect something."},
+  maintain:{pos:"verb",def:"To continue or keep something."},
+  opportunity:{pos:"noun",def:"A good chance to do something."},
+  perspective:{pos:"noun",def:"A particular way of seeing something."},
+  progress:{pos:"noun",def:"Improvement or development."},
+  reliable:{pos:"adjective",def:"Able to be trusted."},
+  significant:{pos:"adjective",def:"Important or meaningful."},
+  strategy:{pos:"noun",def:"A plan designed to achieve a goal."}
+};
+
+const words = Object.keys(wordsData);
+
+let currentWord="";
+let score=0;
+let timeLeft=15;
+let timerInterval;
+let revealTimeout;
+let firstRound=true;
+
+function scrambleWord(word){
+  const chars = word.split("");
+  for (let i = chars.length - 1; i > 0; i--) {
+    if (chars[i] === " " || chars[i] === ".") continue;
+    let j = Math.floor(Math.random() * (i + 1));
+    if (chars[j] === " " || chars[j] === ".") continue;
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  return chars.join("");
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timeLeft=15;
+  document.getElementById("timer").textContent=timeLeft;
+
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    document.getElementById("timer").textContent=timeLeft;
+    if(timeLeft<=0){
+      clearInterval(timerInterval);
+      revealWord(false);
+    }
+  },1000);
+}
+
+function revealWord(correct){
+  const overlay=document.getElementById("revealOverlay");
+  const status=document.getElementById("statusText");
+  const bigWord=document.getElementById("bigWord");
+  const wordInfo=document.getElementById("wordInfo");
+  const continueBtn=document.getElementById("continueBtn");
+
+  clearInterval(timerInterval);
+
+  status.textContent = correct ? "Correct" : "Time has run out";
+  bigWord.textContent = currentWord.toUpperCase();
+
+  if(wordsData[currentWord]){
+    const info=wordsData[currentWord];
+    wordInfo.textContent="("+info.pos+") — "+info.def;
+  } else {
+    wordInfo.textContent="";
+  }
+
+  overlay.style.opacity=1;
+  overlay.style.pointerEvents="auto";
+  continueBtn.style.display="inline-block";
+
+  revealTimeout=setTimeout(()=>{
+    continueGame();
+  },15000);
+}
+
+function continueGame(){
+  clearTimeout(revealTimeout);
+  const overlay=document.getElementById("revealOverlay");
+  const continueBtn=document.getElementById("continueBtn");
+
+  overlay.style.opacity=0;
+  overlay.style.pointerEvents="none";
+  continueBtn.style.display="none";
+  newWord();
+}
+
+function newWord(){
+  if(firstRound){
+    currentWord = specialFirstWord;
+    firstRound = false;
+  } else {
+    currentWord = words[Math.floor(Math.random()*words.length)];
+  }
+
+  document.getElementById("scrambledWord").textContent=scrambleWord(currentWord);
+  const input=document.getElementById("userInput");
+  input.value="";
+  input.focus();
+  startTimer();
+}
+
+function checkAnswer(){
+  const guess=document.getElementById("userInput").value.toLowerCase();
+  const wordBox=document.getElementById("scrambledWord");
+
+  if(guess===currentWord){
+    score++;
+    document.getElementById("score").textContent=score;
+    revealWord(true);
+  } else {
+    wordBox.classList.add("shake");
+    setTimeout(()=>wordBox.classList.remove("shake"),400);
+  }
+}
+
+document.getElementById("userInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){
+    checkAnswer();
+  }
+});
+
+const background=document.querySelector(".background");
+for(let i=0;i<35;i++){
+  const span=document.createElement("span");
+  span.style.left=Math.random()*100+"vw";
+  span.style.animationDuration=(Math.random()*10+5)+"s";
+  span.style.opacity=Math.random();
+  background.appendChild(span);
+}
+
+newWord();
+</script>
+
+</body>
+</html>

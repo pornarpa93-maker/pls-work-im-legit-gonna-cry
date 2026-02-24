@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A2 Level</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#1e3c72,#2a5298);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:white;
+  overflow:hidden;
+}
+
+.game-container{
+  text-align:center;
+  background:rgba(0,0,0,0.6);
+  padding:40px;
+  border-radius:20px;
+  width:420px;
+  box-shadow:0 0 30px rgba(0,0,0,0.6);
+}
+
+.word{
+  font-size:40px;
+  letter-spacing:8px;
+  margin-bottom:25px;
+}
+
+input{
+  padding:12px;
+  font-size:18px;
+  width:80%;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  text-align:center;
+}
+
+button{
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  font-size:16px;
+  cursor:pointer;
+  background:#ffd700;
+}
+
+.reveal{
+  font-size:36px;
+  margin-top:20px;
+  font-weight:bold;
+}
+
+.small{
+  font-size:18px;
+  margin-top:8px;
+}
+
+.green{
+  color:#00ff88;
+}
+
+.red{
+  color:#ff4d4d;
+}
+
+.shake{
+  animation:shake 0.4s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-8px);}
+  50%{transform:translateX(8px);}
+  75%{transform:translateX(-8px);}
+  100%{transform:translateX(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+  <div class="word" id="scrambledWord"></div>
+  <input type="text" id="answerInput" autocomplete="off" spellcheck="false">
+  <br>
+  <button onclick="checkAnswer()">Submit</button>
+  <div id="result"></div>
+</div>
+
+<script>
+
+const words = [
+  {word:"i love mr. theophilus", pos:"phrase", def:"An iconic legendary sentence."},
+  {word:"achieve", pos:"verb", def:"To successfully complete something."},
+  {word:"balance", pos:"noun/verb", def:"A state of stability or equal weight."},
+  {word:"culture", pos:"noun", def:"The customs and ideas of a society."},
+  {word:"develop", pos:"verb", def:"To grow or cause to grow."},
+  {word:"education", pos:"noun", def:"The process of learning knowledge."},
+  {word:"feature", pos:"noun", def:"An important part or characteristic."},
+  {word:"improve", pos:"verb", def:"To make something better."},
+  {word:"journey", pos:"noun", def:"An act of traveling from one place to another."},
+  {word:"knowledge", pos:"noun", def:"Information and understanding."},
+  {word:"language", pos:"noun", def:"A system of communication."},
+  {word:"measure", pos:"verb", def:"To find the size or amount of something."},
+  {word:"opinion", pos:"noun", def:"A personal belief or judgment."},
+  {word:"project", pos:"noun", def:"A planned piece of work."},
+  {word:"quality", pos:"noun", def:"The standard of something."},
+  {word:"respect", pos:"noun/verb", def:"A feeling of admiration."},
+  {word:"support", pos:"verb", def:"To help or assist."},
+  {word:"travel", pos:"verb", def:"To go from one place to another."},
+  {word:"understand", pos:"verb", def:"To know the meaning of something."},
+  {word:"value", pos:"noun", def:"The importance of something."}
+];
+
+let currentIndex = 0;
+let currentWordObj = words[currentIndex];
+let scrambled = "";
+
+const scrambledWord = document.getElementById("scrambledWord");
+const result = document.getElementById("result");
+const input = document.getElementById("answerInput");
+
+function scramble(word){
+  return word.split('').sort(()=>Math.random()-0.5).join('');
+}
+
+function loadWord(){
+  currentWordObj = words[currentIndex];
+  scrambled = scramble(currentWordObj.word);
+  scrambledWord.textContent = scrambled;
+  result.innerHTML = "";
+  input.value = "";
+  input.focus();
+}
+
+function checkAnswer(){
+  if(input.value.toLowerCase() === currentWordObj.word.toLowerCase()){
+    result.innerHTML = `
+      <div class="reveal green">${currentWordObj.word}</div>
+      <div class="small green">${currentWordObj.pos} — ${currentWordObj.def}</div>
+    `;
+    currentIndex = (currentIndex + 1) % words.length;
+    setTimeout(loadWord,2000);
+  } else {
+    result.innerHTML = `<div class="small red">Wrong answer</div>`;
+    scrambledWord.classList.add("shake");
+    setTimeout(()=>scrambledWord.classList.remove("shake"),400);
+  }
+}
+
+loadWord();
+</script>
+
+</body>
+</html>

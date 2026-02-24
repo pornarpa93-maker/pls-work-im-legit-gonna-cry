@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Publishing Platforms | Universe</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #050507;
+  --panel: rgba(20, 20, 25, 0.75);
+  --text: #eaeaea;
+  --gold: #d4a017;
+  --gold-glow: rgba(212, 160, 23, 0.25);
+  --border: rgba(212, 160, 23, 0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  background-image: radial-gradient(circle at 10% 10%, rgba(212, 160, 23, 0.06), transparent 60%);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 70px;
+}
+
+header h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 3.2rem;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+header p {
+  opacity: 0.5;
+  font-size: 0.95rem;
+  margin-top: 10px;
+}
+
+/* FEATURED */
+.featured-platform {
+  background:
+    linear-gradient(135deg, rgba(212,160,23,0.15), rgba(0,0,0,0.85)),
+    url('https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1600') center/cover;
+  border: 1px solid var(--gold);
+  border-radius: 35px;
+  padding: 60px;
+  margin-bottom: 60px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.featured-platform::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, var(--gold-glow), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.featured-platform:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 35px 80px rgba(0,0,0,0.8);
+}
+
+.featured-platform:hover::after {
+  opacity: 1;
+}
+
+.featured-platform h2 {
+  font-family: "Playfair Display", serif;
+  color: var(--gold);
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--gold);
+  color: black;
+  padding: 6px 18px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.featured-platform p {
+  max-width: 650px;
+  opacity: 0.85;
+}
+
+/* GRID */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.platform-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 25px;
+  padding: 40px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.4s ease;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.platform-box::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: radial-gradient(circle, var(--gold-glow), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.platform-box:hover {
+  border-color: var(--gold);
+  transform: translateY(-12px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.platform-box:hover::before {
+  opacity: 0.3;
+}
+
+.platform-box h3 {
+  font-family: "Playfair Display", serif;
+  color: var(--gold);
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.platform-box p {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  flex-grow: 1;
+}
+
+.tag {
+  margin-top: 25px;
+  font-size: 0.75rem;
+  color: var(--gold);
+  font-weight: 600;
+  opacity: 0.4;
+  letter-spacing: 1px;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 70px;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: 0.3s ease;
+}
+
+.back-link:hover {
+  letter-spacing: 5px;
+}
+
+@media (max-width: 600px) {
+  header h1 { font-size: 2.2rem; }
+  .featured-platform { padding: 40px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <header>
+    <h1>Platforms</h1>
+    <p>Curated spaces to publish your work.</p>
+  </header>
+
+  <a href="https://archiveofourown.org" class="featured-platform" target="_blank" rel="noopener noreferrer">
+    <span class="badge">Primary Choice</span>
+    <h2>AO3</h2>
+    <p>The global standard for fanfiction publishing. A powerful archive with advanced tagging, dedicated communities, and unmatched creative freedom.</p>
+  </a>
+
+  <div class="platform-grid">
+    
+    <a href="https://www.readawrite.com" class="platform-box" target="_blank" rel="noopener noreferrer">
+      <h3>ReadAWrite</h3>
+      <p>One of the most popular platforms among Thai writers and readers, offering strong engagement and flexible publishing tools.</p>
+      <span class="tag">#Thai #Community #Flexible</span>
+    </a>
+
+    <a href="https://www.wattpad.com" class="platform-box" target="_blank" rel="noopener noreferrer">
+      <h3>Wattpad</h3>
+      <p>A global storytelling giant ideal for original fiction, especially romance and young adult genres.</p>
+      <span class="tag">#Global #Original #Youth</span>
+    </a>
+
+    <a href="https://www.dek-d.com" class="platform-box" target="_blank" rel="noopener noreferrer">
+      <h3>Dek-D</h3>
+      <p>A legendary Thai platform rooted in youth culture, fantasy, and light novel communities.</p>
+      <span class="tag">#Thai #Classic #Fantasy</span>
+    </a>
+
+    <a href="https://medium.com" class="platform-box" target="_blank" rel="noopener noreferrer">
+      <h3>Medium</h3>
+      <p>Minimal, elegant, and focused — perfect for essays, commentary, and thoughtful long-form writing.</p>
+      <span class="tag">#Essays #NonFiction #Minimal</span>
+    </a>
+
+  </div>
+
+  <a href="hobby writing page1.html" class="back-link">← Return to More About Literature</a>
+</div>
+
+</body>
+</html>
